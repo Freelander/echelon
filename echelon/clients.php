@@ -1,7 +1,7 @@
 <?php
 /**
  * Displays client data with an ajax call.
- * Data is processed by ajax/inc_clients.php
+ * Data is processed by ajax/clients_ajax.php
  */
  
 $page = "client";
@@ -14,7 +14,7 @@ require 'inc.php';
 require 'inc/header.php';
 ?>
 
-<table id="clients" class="display" width="100%">
+<table id="clients-dt" class="display" width="100%">
 	<caption>
 		Client Listing <small>A list of all players who have ever connected to the server.</small>
 	</caption>

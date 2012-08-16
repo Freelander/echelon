@@ -1,7 +1,7 @@
 <?php
 /**
- * This file generates a list of client data in JSON format
- * to be called within clients.php via jquery dataTables plugin
+ * This file generates a list of admin data in JSON format
+ * to be called within admins.php via jquery dataTables plugin
  */
  
 $auth_name = 'clients';
@@ -12,20 +12,18 @@ require '../inc.php';
 // the columns to be filtered, ordered and returned
 // must be in the same order as displayed in the table
 $columns = array (
-	"clients.id", 
 	"clients.name",
 	"groups.name",
+	"clients.id", 
 	"clients.connections",
-	"clients.time_add",
-	"clients.time_edit",  
-	"clients.group_bits"
+	"clients.time_edit"
 );
  
 // the table being queried
 $table = "clients";
 
 //custom where operation
-$custom_where = "clients.id != 1";
+$custom_where = "clients.group_bits >= 8";
  
 // any JOIN operations that you need to do
 $joins = "LEFT JOIN groups ON clients.group_bits = groups.id";
@@ -110,13 +108,11 @@ foreach($main_query['data'] as $client) {
 	$level = $client['level'];
 	$connections = $client['connections'];
 	$time_edit = $client['time_edit'];
-	$time_add = $client['time_add'];
-	$time_add = date($tformat, $time_add);
 	$time_edit = date($tformat, $time_edit);
 
 	$client = clientLink($name, $cid);
 
-	$response['aaData'][] = array($cid, $client, $level, $connections, $time_add, $time_edit);
+	$response['aaData'][] = array($client, $level, $cid, $connections, $time_edit);
 }
  
 // prevent caching and echo the associative array as json
