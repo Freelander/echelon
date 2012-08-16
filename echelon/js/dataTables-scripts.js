@@ -33,5 +33,22 @@ $(document).ready(function() {
 			"bServerSide": true,
 			"sAjaxSource": "ajax/admins_ajax.php"
 		} );
+		
+		//Regulars
+		$('#regular-dt').dataTable( {
+            "aoColumns": [ 
+			/* Name */         { "sWidth" : "30%" },
+			/* Connections */  { "sWidth" : "10%"},
+			/* Client-id */    { "sWidth" : "8%" },
+			/* Level */        null,
+			/* Last Seen */    null
+            ],
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/regular_ajax.php"
+		} );
+
 	} );
 
