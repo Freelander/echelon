@@ -86,6 +86,12 @@ endif; // end if pagination is on
 <!-- load main site js -->
 <script src="<?php echo $path; ?>js/site.js" charset="<?php echo $charset; ?>"></script>
 
+<!-- load Datatables -->
+<script src="<?php echo $path; ?>js/jquery.dataTables.js" charset="<?php echo $charset; ?>"></script>
+
+<!-- load Datatables scripts -->
+<script src="<?php echo $path; ?>js/dataTables-scripts.js" charset="<?php echo $charset; ?>"></script>
+
 <!-- page specific js -->
 <?php if(isMe()) { ?>
 	<script src="js/me.js" charset="<?php echo $charset; ?>"></script>
