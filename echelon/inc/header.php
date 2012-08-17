@@ -40,7 +40,11 @@ endif;
 	<link rel="shortcut icon" href="favicon.ico" >
 	
 	<!-- Load CSS Stylesheet -->
-	<link href="<?php echo PATH; ?>css/style.min.css" rel="stylesheet" media="screen" type="text/css" />
+	<link href="<?php echo PATH; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
+    <style type="text/css" title="currentStyle">
+			@import "<?php echo PATH; ?>css/smoothness/jquery-ui-1.8.4.custom.css";
+            @import "<?php echo PATH; ?>css/demo_table_jui.css";
+	</style>
 
 	<?php 
 	## Include CSS For pages ##

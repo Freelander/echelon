@@ -372,3 +372,6 @@ label.uname:hover { color: #bbb; }
 .chat-cmd { color: blue; font-weight: bold; }
 .chat-fh{display:block;width:50%;border-bottom:1px solid #ccc;margin:10px 0 3px;padding-bottom:2px;}
 .animate:hover{background-image:none;}
+
+/* Additional styling for dataTables */
+.duration-select{ width: 50%;float: right;text-align: right; } 
