@@ -12,8 +12,8 @@ require '../inc.php';
 // the columns to be filtered, ordered and returned
 // must be in the same order as displayed in the table
 $columns = array (
-	"clients.id", 
 	"clients.name",
+	"clients.id", 
 	"groups.name",
 	"clients.connections",
 	"clients.time_add",
@@ -33,16 +33,17 @@ $joins = "LEFT JOIN groups ON clients.group_bits = groups.id";
 // filtering
 $sql_where = "";
 if ($_GET['sSearch'] != "") {
-	$sql_where = "WHERE ";
+	$sql_where = "WHERE ( ";
 	foreach ($columns as $column)
 	{
-			$sql_where .= $column . " LIKE '%" . $_GET['sSearch'] . "%' OR ";
+		$sql_where .= $column . " LIKE '%" . $_GET['sSearch'] . "%' OR ";
 	}
 	$sql_where = substr($sql_where, 0, -3);
+	$sql_where .= " ) ";
 }
 
 if($sql_where != "") {
-	$sql_where .= " AND $custom_where ";
+	$sql_where .= " AND ( $custom_where ) ";
 } else {
 	$sql_where .= "WHERE $custom_where ";
 }
@@ -115,8 +116,9 @@ foreach($main_query['data'] as $client) {
 	$time_edit = date($tformat, $time_edit);
 
 	$client = clientLink($name, $cid);
+	$cid = '@' . $cid;
 
-	$response['aaData'][] = array($cid, $client, $level, $connections, $time_add, $time_edit);
+	$response['aaData'][] = array($client, $cid, $level, $connections, $time_add, $time_edit);
 }
  
 // prevent caching and echo the associative array as json

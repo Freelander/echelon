@@ -20,8 +20,8 @@ require 'inc/header.php';
 	</caption>
 	<thead>
 		<tr>
-			<th>Client-id</th>
 			<th>Name</th>
+			<th>Client-id</th>
 			<th>Level</th>
 			<th>Connections</th>
 			<th>First Seen</th>

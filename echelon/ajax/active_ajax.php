@@ -1,7 +1,7 @@
 <?php
 /**
- * This file generates a list of admin data in JSON format
- * to be called within admins.php via jquery dataTables plugin
+ * This file generates a list of inactive admins in JSON format
+ * to be called within active.php via jquery dataTables plugin
  */
  
 $auth_name = 'clients';
@@ -9,12 +9,18 @@ $b3_conn = true; // this page needs to connect to the B3 database
 
 require '../inc.php';
 
+$time = time();
+$length = 7; // default length in days that the admin must be in active to show on this list
+if ($_GET['sSearch'] != "") {
+	$length = $_GET['sSearch'];
+}
+
 // the columns to be filtered, ordered and returned
 // must be in the same order as displayed in the table
 $columns = array (
 	"clients.name",
+	"clients.id",
 	"groups.name",
-	"clients.id", 
 	"clients.connections",
 	"clients.time_edit"
 );
@@ -23,28 +29,13 @@ $columns = array (
 $table = "clients";
 
 //custom where operation
-$custom_where = "clients.group_bits >= 8";
+$custom_where = sprintf("clients.group_bits >= 8 AND clients.group_bits <=64 AND(%d - clients.time_edit > %d*60*60*24 )", $time, $length);
  
 // any JOIN operations that you need to do
 $joins = "LEFT JOIN groups ON clients.group_bits = groups.id";
  
 // filtering
-$sql_where = "";
-if ($_GET['sSearch'] != "") {
-	$sql_where = "WHERE ( ";
-	foreach ($columns as $column)
-	{
-		$sql_where .= $column . " LIKE '%" . $_GET['sSearch'] . "%' OR ";
-	}
-	$sql_where = substr($sql_where, 0, -3);
-	$sql_where .= " ) ";
-}
-
-if($sql_where != "") {
-	$sql_where .= " AND ( $custom_where ) ";
-} else {
-	$sql_where .= "WHERE $custom_where ";
-}
+$sql_where = "WHERE $custom_where ";
 
 // ordering
 $sql_order = "";
@@ -75,7 +66,7 @@ if(!$db->error) {
 }
 
 //Just testing the main query
-//$p = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $columns_n) . " FROM {$table} {$joins} {$sql_where} {$sql_order} {$sql_limit}";
+$p = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $columns_n) . " FROM {$table} {$joins} {$sql_where} {$sql_order} {$sql_limit}";
 //echo $p;
 
 // get the number of filtered rows
@@ -97,7 +88,7 @@ $response['sEcho'] = intval($_GET['sEcho']);
  
 // this line is important in case there are no results
 $response['aaData'] = array();
- 
+
 // finish getting rows from the main query
 foreach($main_query['data'] as $client) {
 	$cid = $client['id'];
@@ -109,12 +100,13 @@ foreach($main_query['data'] as $client) {
 	$level = $client['level'];
 	$connections = $client['connections'];
 	$time_edit = $client['time_edit'];
-	$time_edit = date($tformat, $time_edit);
+	$duration = time_duration($time - $time_edit, 'yMwd');
+	$time_edit = date($tformat, $time_edit); // this must be after the time_diff
 
 	$client = clientLink($name, $cid);
 	$cid = '@' . $cid;
 
-	$response['aaData'][] = array($client, $level, $cid, $connections, $time_edit);
+	$response['aaData'][] = array($client, $cid, $level, $connections, $time_edit, $duration);
 }
  
 // prevent caching and echo the associative array as json
