@@ -4,12 +4,12 @@ $(document).ready(function() {
 		//Clients
 		$('#clients-dt').dataTable( {
 			"aoColumns": [ 
-			/* Name */		 { "sWidth" : "30%" },
-			/* Client-id */	{ "sWidth" : "8%" },
-			/* Level */		null,
+			/* Name */         { "sWidth" : "30%" },
+			/* Client-id */    { "sWidth" : "8%" },
+			/* Level */        null,
 			/* Connections */  { "sWidth" : "10%"},
 			/* First Seen */   null,
-			/* Last Seen */	null
+			/* Last Seen */    null
 			],
 			"aaSorting": [[ 1, "asc" ]],
 			"bJQueryUI": true,
@@ -22,11 +22,11 @@ $(document).ready(function() {
 		//Admins
 		$('#admins-dt').dataTable( {
 			"aoColumns": [ 
-			/* Name */		 { "sWidth" : "30%" },
-			/* Level */		null,
-			/* Client-id */	{ "sWidth" : "8%" },
+			/* Name */         { "sWidth" : "30%" },
+			/* Level */        null,
+			/* Client-id */    { "sWidth" : "8%" },
 			/* Connections */  { "sWidth" : "10%"},
-			/* Last Seen */	null
+			/* Last Seen */    null
 			],
 			"aaSorting": [[ 1, "desc" ]],
 			"bJQueryUI": true,
@@ -39,11 +39,11 @@ $(document).ready(function() {
 		//Regulars
 		$('#regular-dt').dataTable( {
 			"aoColumns": [ 
-			/* Name */		 { "sWidth" : "30%" },
+			/* Name */         { "sWidth" : "30%" },
 			/* Connections */  { "sWidth" : "10%"},
-			/* Client-id */	{ "sWidth" : "8%" },
-			/* Level */		null,
-			/* Last Seen */	null
+			/* Client-id */    { "sWidth" : "8%" },
+			/* Level */        null,
+			/* Last Seen */    null
 			],
 			"aaSorting": [[ 4, "desc" ]],
 			"bJQueryUI": true,
@@ -56,12 +56,12 @@ $(document).ready(function() {
 		//Inactive Admins
 		$('#active-dt').dataTable( {
 			"aoColumns": [ 
-			/* Name */		 { "sWidth" : "30%" },
-			/* Client-id */	{ "sWidth" : "8%" },
-			/* Level */		null,
+			/* Name */         { "sWidth" : "30%" },
+			/* Client-id */    { "sWidth" : "8%" },
+			/* Level */        null,
 			/* Connections */  { "sWidth" : "10%"},
-			/* Last Seen */	null,
-			/* Duration */	{ "sWidth" : "25%", "bSortable": false }
+			/* Last Seen */    null,
+			/* Duration */     { "sWidth" : "25%", "bSortable": false }
 			],
 			"sDom": '<"H"lT<"duration-select">r>t<"F"ip>', //Replacing standart filter text box with custom select box
 			"aaSorting": [[ 4, "asc" ]],
@@ -92,5 +92,38 @@ $(document).ready(function() {
 		// Adding select box filter to Inactive Admins page
 		var oTable = $('#active-dt').dataTable();
 		$('select#d').change( function() { oTable.fnFilter( $(this).val() ); } );
+
+		//Admin Kicks
+		$('#adminkicks-dt').dataTable( {
+			"aoColumns": [ 
+			/* Client */     { "sWidth" : "20%" },
+			/* Kicked at */  null,
+			/* Reason */     { "sWidth" : "45%" },
+			/* Admin */      { "sWidth" : "20%"}
+			],
+			"bFilter": false,
+			"aaSorting": [[ 1, "desc" ]],
+			"bJQueryUI": true,
+			"sPaginationType": "full_numbers",
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/adminkicks_ajax.php"
+		} );
+
+		//B3 Kicks
+		$('#b3kicks-dt').dataTable( {
+			"aoColumns": [ 
+			/* Client */     { "sWidth" : "25%" },
+			/* Kicked at */  null,
+			/* Reason */     { "sWidth" : "55%" }
+			],
+			"bFilter": false,
+			"aaSorting": [[ 1, "desc" ]],
+			"bJQueryUI": true,
+			"sPaginationType": "full_numbers",
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/b3kicks_ajax.php"
+		} );
 
 	} );

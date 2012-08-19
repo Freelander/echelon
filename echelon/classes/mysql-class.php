@@ -96,7 +96,7 @@ class DB_B3 {
         if($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
             @$this->mysql->close(); // close the connection
 		
-		$this->instance = NULL;
+		self::$instance = NULL;
     }
 	
 	/**
