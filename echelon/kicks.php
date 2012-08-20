@@ -13,11 +13,9 @@ else
 if($t == 'a') {
 	$page = "adminkicks";
 	$page_title = "Admin Kicks";
-	$type_admin = true;
 } else {
 	$page = "b3kicks";
 	$page_title = "B3 Kicks";
-	$type_admin = false; // this is not an admin page
 }
 
 $auth_name = 'penalties';
@@ -77,4 +75,3 @@ if($t == 'a') {
 }
 
 require 'inc/footer.php'; 
-?>

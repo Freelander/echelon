@@ -126,4 +126,43 @@ $(document).ready(function() {
 			"sAjaxSource": "ajax/b3kicks_ajax.php"
 		} );
 
+		//Admin Bans
+		$('#adminbans-dt').dataTable( {
+			"aoColumns": [ 
+			/* Player */     { "sWidth" : "15%" },
+			/* Type */       { "sWidth" : "10%" },
+			/* Added */      { "sWidth" : "10%" },
+			/* Duration */   { "sWidth" : "10%" },
+			/* Expires */    { "sWidth" : "10%" },
+			/* Reason */     { "sWidth" : "30%" },
+			/* Admin */      { "sWidth" : "15%"}
+			],
+			"bFilter": false,
+			"aaSorting": [[ 2, "desc" ]],
+			"bJQueryUI": true,
+			"sPaginationType": "full_numbers",
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/adminbans_ajax.php"
+		} );
+
+		//B3 Bans
+		$('#b3bans-dt').dataTable( {
+			"aoColumns": [ 
+			/* Player */     { "sWidth" : "15%" },
+			/* Type */       { "sWidth" : "10%" },
+			/* Added */      { "sWidth" : "10%" },
+			/* Duration */   { "sWidth" : "10%" },
+			/* Expires */    { "sWidth" : "10%" },
+			/* Reason */     null,
+			],
+			"bFilter": false,
+			"aaSorting": [[ 2, "desc" ]],
+			"bJQueryUI": true,
+			"sPaginationType": "full_numbers",
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/b3bans_ajax.php"
+		} );
+
 	} );
