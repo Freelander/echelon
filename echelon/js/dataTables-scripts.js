@@ -188,4 +188,21 @@ $(document).ready(function() {
 			"sAjaxSource": "ajax/pubbans_ajax.php"
 		} );
 
+		//Notices
+		$('#notices-dt').dataTable( {
+			"aoColumns": [ 
+			/* Player */     { "sWidth" : "15%" },
+			/* Client-id */  { "sWidth" : "10%" },
+			/* Time Added */ { "sWidth" : "15%" },
+			/* Comment */    null,
+			/* Admin */      { "sWidth" : "15%" },
+			],
+			"aaSorting": [[ 2, "desc" ]],
+			"bJQueryUI": true,
+			"sPaginationType": "full_numbers",
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/notices_ajax.php"
+		} );
+
 	} );

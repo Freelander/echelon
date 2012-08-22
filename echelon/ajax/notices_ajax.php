@@ -1,37 +1,36 @@
 <?php
 /**
- * This file generates a list of public bans data in JSON format
- * to be called within pubbans.php via jquery dataTables plugin
+ * This file generates a list of notices in JSON format
+ * to be called within notices.php via jquery dataTables plugin
  */
-
-$auth_user_here = false;
+ 
+$auth_name = 'penalties';
 $b3_conn = true; // this page needs to connect to the B3 database
 
 require '../inc.php';
 
-$time = time();
-
 // the columns to be filtered, ordered and returned
 // must be in the same order as displayed in the table
+// Add extra columns to the end of the array.
 $columns = array (
-	"clients.name",
-	"penalties.id",
-	"penalties.type",
-	"penalties.time_add",
-	"penalties.duration",
-	"penalties.time_expire",
-	"penalties.reason",
-	"clients.id"
+	"c2.name",
+	"p.client_id",
+	"p.time_add",
+	"p.reason",
+	"COALESCE(c1.name, 'B3')",
+	"p.id",
+	"p.type",
+	"COALESCE(c1.id, '1')"
 );
  
 // the table being queried
-$table = "penalties";
+$table = "penalties p";
 
 //custom where operation
-$custom_where = "penalties.inactive = 0 AND penalties.type != 'Warning' AND penalties.type != 'Notice' AND (penalties.time_expire = -1 OR penalties.time_expire > $time)";
+$custom_where = "p.type = 'Notice'";
  
 // any JOIN operations that you need to do
-$joins = "LEFT JOIN clients ON penalties.client_id = clients.id";
+$joins = "LEFT JOIN clients c1 ON c1.id = p.admin_id LEFT JOIN clients c2 ON c2.id = p.client_id";
  
 // filtering
 $sql_where = "";
@@ -69,10 +68,12 @@ if ( isset( $_GET['iDisplayStart'] ) && $_GET['iDisplayLength'] != '-1' ) {
 
 //add AS thingy here if any and regenerate $columns array since we don't want to mess ordering/filtering etc.
 foreach($columns as $column) {
-	if($column == "clients.id") {
-		$column = "clients.id as client_id";
-	} elseif($column == "penalties.id") {
-		$column = "penalties.id as ban_id";
+	if($column == "COALESCE(c1.id, '1')") {
+		$column = "COALESCE(c1.id, '1') as admin_id";
+	} elseif ($column == "COALESCE(c1.name, 'B3')") {
+		$column = "COALESCE(c1.name, 'B3') as admin_name";
+	} elseif ($column == "c2.name") {
+		$column = "c2.name as client_name";
 	}
 	$columns_n[] = $column;
 }
@@ -82,7 +83,7 @@ if(!$db->error) {
 }
 
 //Just testing the main query
-//$p = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $columns_n) . " FROM {$table} {$joins} {$sql_where} {$sql_order} {$sql_limit}";
+$p = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $columns_n) . " FROM {$table} {$joins} {$sql_where} {$sql_order} {$sql_limit}";
 //echo $p;
 
 // get the number of filtered rows
@@ -94,7 +95,7 @@ $response['iTotalDisplayRecords'] = $row[0]['FOUND_ROWS()'];
  
 // get the number of rows in total
 if(!$db->error) {
-	$total_query = $db->query("SELECT COUNT(id) FROM {$table}");
+	$total_query = $db->query("SELECT COUNT(id) FROM clients");
 }
 $row = $total_query['data'];
 $response['iTotalRecords'] = $row[0]['COUNT(id)'];
@@ -106,32 +107,22 @@ $response['sEcho'] = intval($_GET['sEcho']);
 $response['aaData'] = array();
  
 // finish getting rows from the main query
-foreach($main_query['data'] as $pen) {
-	$ban_id = $pen['ban_id'];
-	$type = $pen['type'];
-	$time_add = $pen['time_add'];
-	$time_expire = $pen['time_expire'];
-	$reason = tableClean($pen['reason']);
-	$client_id = $pen['client_id'];
-	$client_name = tableClean($pen['name']);
-	$duration = $pen['duration'];
+foreach($main_query['data'] as $notice) {
+	$cname = tableClean($notice['client_name']);
+	$cid = $notice['client_id'];
+	$aname = tableClean($notice['admin_name']);
+	$aid = $notice['admin_id'];
+	$reason = tableClean($notice['reason']);
+	$time_add = $notice['time_add'];
 
-	## Tidt data to make more human friendly
-	if($time_expire != '-1')
-		$duration_read = time_duration($duration*60); // all penalty durations are stored in minutes, so multiple by 60 in order to get seconds
-	else
-		$duration_read = '';
+	## Change to human readable	time
+	$time_add = date($tformat, $time_add);
 
-	$time_expire_read = timeExpirePen($time_expire);
-	$time_add_read = date($tformat, $time_add);
-	$reason_read = removeColorCode($reason);
+	$client = clientLink($cname, $cid);
+	$admin = clientLink($aname, $aid);
+	$cid = '@' . $cid;
 
-	if($mem->loggedIn())
-		$client_name_read = clientLink($client_name, $client_id);
-	else
-		$client_name_read = $client_name;
-
-	$response['aaData'][] = array($client_name_read, $ban_id, $type, $time_add_read, $duration_read, $time_expire_read, $reason_read);
+	$response['aaData'][] = array( $client, $cid, $time_add, $reason, $admin);
 }
  
 // prevent caching and echo the associative array as json
