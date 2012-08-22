@@ -1,37 +1,37 @@
 <?php
 /**
- * This file generates a list of admin bans in JSON format
- * to be called within bans.php via jquery dataTables plugin
+ * This file generates a list of publşc bans data in JSON format
+ * to be called within pubbans.php via jquery dataTables plugin
  */
- 
-$auth_name = 'penalties';
+
+$auth_user_here = false;
 $b3_conn = true; // this page needs to connect to the B3 database
 
 require '../inc.php';
 
+$time = time();
+
 // the columns to be filtered, ordered and returned
 // must be in the same order as displayed in the table
-// Add extra columns to the end of the array.
 $columns = array (
-	"target.name",
+	"clients.name",
+	"penalties.id",
 	"penalties.type",
 	"penalties.time_add",
 	"penalties.duration",
 	"penalties.time_expire",
 	"penalties.reason",
-	"clients.name",
-	"target.id",
-	"clients.id",
+	"clients.id"
 );
  
 // the table being queried
-$table = "penalties, clients, clients as target";
+$table = "penalties";
 
 //custom where operation
-$custom_where = "admin_id != '0' AND (penalties.type = 'Ban' OR penalties.type = 'TempBan') AND inactive = 0 AND penalties.time_expire <> 0 AND penalties.client_id = target.id AND penalties.admin_id = clients.id";
+$custom_where = "penalties.inactive = 0 AND penalties.type != 'Warning' AND penalties.type != 'Notice' AND (penalties.time_expire = -1 OR penalties.time_expire > $time)";
  
 // any JOIN operations that you need to do
-$joins = "";
+$joins = "LEFT JOIN clients ON penalties.client_id = clients.id";
  
 // filtering
 $sql_where = "";
@@ -69,14 +69,10 @@ if ( isset( $_GET['iDisplayStart'] ) && $_GET['iDisplayLength'] != '-1' ) {
 
 //add AS thingy here if any and regenerate $columns array since we don't want to mess ordering/filtering etc.
 foreach($columns as $column) {
-	if($column == "target.id") {
-		$column = "target.id as client_id";
-	} elseif ($column == "target.name") {
-		$column = "target.name as client_name";
-	} elseif ($column == "clients.id") {
-		$column = "clients.id as admins_id";
-	} elseif ($column == "clients.name") {
-		$column = "clients.name as admins_name";
+	if($column == "clients.id") {
+		$column = "clients.id as client_id";
+	} elseif($column == "penalties.id") {
+		$column = "penalties.id as ban_id";
 	}
 	$columns_n[] = $column;
 }
@@ -86,7 +82,7 @@ if(!$db->error) {
 }
 
 //Just testing the main query
-$p = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $columns_n) . " FROM {$table} {$joins} {$sql_where} {$sql_order} {$sql_limit}";
+//$p = "SELECT SQL_CALC_FOUND_ROWS " . implode(", ", $columns_n) . " FROM {$table} {$joins} {$sql_where} {$sql_order} {$sql_limit}";
 //echo $p;
 
 // get the number of filtered rows
@@ -98,7 +94,7 @@ $response['iTotalDisplayRecords'] = $row[0]['FOUND_ROWS()'];
  
 // get the number of rows in total
 if(!$db->error) {
-	$total_query = $db->query("SELECT COUNT(id) FROM clients");
+	$total_query = $db->query("SELECT COUNT(id) FROM {$table}");
 }
 $row = $total_query['data'];
 $response['iTotalRecords'] = $row[0]['COUNT(id)'];
@@ -110,17 +106,15 @@ $response['sEcho'] = intval($_GET['sEcho']);
 $response['aaData'] = array();
  
 // finish getting rows from the main query
-foreach($main_query['data'] as $data) {
-	$type = $data['type'];
-	$time_add = $data['time_add'];
-	$time_expire = $data['time_expire'];
-	$reason = tableClean($data['reason']);
-	$duration = $data['duration'];
-	$client_id = $data['client_id'];
-	$client_name = tableClean($data['client_name']);
-	$admin_id = $data['admins_id'];
-	$admin_name = tableClean($data['admins_name']);
-
+foreach($main_query['data'] as $pen) {
+	$ban_id = $pen['ban_id'];
+	$type = $pen['type'];
+	$time_add = $pen['time_add'];
+	$time_expire = $pen['time_expire'];
+	$reason = tableClean($pen['reason']);
+	$client_id = $pen['client_id'];
+	$client_name = tableClean($pen['name']);
+	$duration = $pen['duration'];
 
 	## Tidt data to make more human friendly
 	if($time_expire != '-1')
@@ -132,10 +126,12 @@ foreach($main_query['data'] as $data) {
 	$time_add_read = date($tformat, $time_add);
 	$reason_read = removeColorCode($reason);
 
-	$admin = clientLink($admin_name, $admin_id);
-	$client = clientLink($client_name, $client_id);
+	if($mem->loggedIn())
+		$client_name_read = clientLink($client_name, $client_id);
+	else
+		$client_name_read = $client_name;
 
-	$response['aaData'][] = array( $client, $type, $time_add_read, $duration_read, $time_expire_read, $reason_read, $admin );
+	$response['aaData'][] = array($client_name_read, $ban_id, $type, $time_add_read, $duration_read, $time_expire_read, $reason_read);
 }
  
 // prevent caching and echo the associative array as json

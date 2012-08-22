@@ -165,4 +165,27 @@ $(document).ready(function() {
 			"sAjaxSource": "ajax/b3bans_ajax.php"
 		} );
 
+		//Public Bans
+		$('#pubbans-dt').dataTable( {
+			"aoColumns": [ 
+			/* Player */     { "sWidth" : "15%" },
+			/* Ban-id */     { "sWidth" : "7%" },
+			/* Type */       { "sWidth" : "7%" },
+			/* Added */      { "sWidth" : "15%" },
+			/* Duration */   { "sWidth" : "10%" },
+			/* Expires */    { "sWidth" : "10%" },
+			/* Reason */     null,
+			],
+			"sDom": '<lfr>t<"F"ip>',
+			"iDisplayLength": 100,
+			"bLengthChange": false,
+			"bFilter": false,
+			"aaSorting": [[ 3, "desc" ]],
+			"bJQueryUI": true,
+			"sPaginationType": "full_numbers",
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "ajax/pubbans_ajax.php"
+		} );
+
 	} );

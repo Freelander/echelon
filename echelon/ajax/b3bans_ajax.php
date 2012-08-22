@@ -1,7 +1,7 @@
 <?php
 /**
- * This file generates a list of admin kicks in JSON format
- * to be called within kicks.php via jquery dataTables plugin
+ * This file generates a list of b3 bans in JSON format
+ * to be called within bans.php via jquery dataTables plugin
  */
  
 $auth_name = 'penalties';
