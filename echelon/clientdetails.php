@@ -259,223 +259,43 @@ require 'inc/header.php';
 		</div>
 		<?php 
 			endif;
-			
+
 			## Plugins CD Form ##
 			if(!$no_plugins_active)
 				$plugins->displayCDForm($cid)
-			
+
 		?>
 	</div><!-- end #actions-box -->
 </div><!-- end #actions -->
 
-<!-- Start Client Aliases -->
 
-<h3 class="cd-h">Aliases</h3>
-<table>
-	<thead>
-		<tr>
-			<th>Alias</th>
-			<th>Times Used</th>
-			<th>First Used</th>
-			<th>Last Used</th>
-		</tr>
-	</thead>
-	<tfoot>
-		<tr><th colspan="4"></th></tr>
-	</tfoot>
-	<tbody>
-	<?php
-		// notice on the query we say that time_add does not equal time_edit, this is because of bug in alias recording in B3 that has now been solved
-		$query = "SELECT alias, num_used, time_add, time_edit FROM aliases WHERE client_id = ? ORDER BY time_edit DESC";
-		$stmt = $db->mysql->prepare($query) or die('Alias Database Query Error'. $db->mysql->error);
-		$stmt->bind_param('i', $cid);
-		$stmt->execute();
-		$stmt->bind_result($alias, $num_used, $time_add, $time_edit);
-		
-		$stmt->store_result(); // needed for the $stmt->num_rows call
-
-		if($stmt->num_rows) :
-			
-			while($stmt->fetch()) :
-	
-				$time_add = date($tformat, $time_add);
-				$time_edit = date($tformat, $time_edit);
-				
-				$alter = alter();
-				
-				$token_del = genFormToken('del'.$id);		
-				
-				// setup heredoc (table data)			
-				$data = <<<EOD
-				<tr class="$alter">
-					<td><strong>$alias</strong></td>
-					<td>$num_used</td>
-					<td><em>$time_add</em></td>
-					<td><em>$time_edit</em></td>
-				</tr>
-EOD;
-				echo $data;
-			
-			endwhile;
-		
-		else : // if there are no aliases connected with this user then put out a small and short message
-		
-			echo '<tr><td colspan="4">'.$name.' has no aliaises.</td></tr>';
-		
-		endif;
-	?>
-	</tbody>
-</table>
-
-<?php
-	//this is sub optimal, but without a better way to check b3 version...
-	$result = $db->query("SHOW TABLES LIKE 'ipaliases'");
-	if($result["num_rows"]):
-?>
-<h3 class="cd-h">IP Aliases</h3>
-<table>
-	<thead>
-		<tr>
-			<th>IP</th>
-			<th>Times Used</th>
-			<th>First Used</th>
-			<th>Last Used</th>
-		</tr>
-	</thead>
-	<tfoot>
-		<tr><th colspan="4"></th></tr>
-	</tfoot>
-	<tbody>
-	<?php
-		// notice on the query we say that time_add does not equal time_edit, this is because of bug in alias recording in B3 that has now been solved
-		$query = "SELECT ip, num_used, time_add, time_edit FROM ipaliases WHERE client_id = ? ORDER BY time_edit DESC";
-		$stmt = $db->mysql->prepare($query) or die('IP Alias Database Query Error'. $db->mysql->error);
-		$stmt->bind_param('i', $cid);
-		$stmt->execute();
-		$stmt->bind_result($ip, $num_used, $time_add, $time_edit);
-		
-		$stmt->store_result(); // needed for the $stmt->num_rows call
-
-		if($stmt->num_rows) :
-			
-			while($stmt->fetch()) :
-	
-				$time_add = date($tformat, $time_add);
-				$time_edit = date($tformat, $time_edit);
-				
-				$alter = alter();
-				
-				$token_del = genFormToken('del'.$id);		
-				
-				// setup heredoc (table data)			
-				$data = <<<EOD
-				<tr class="$alter">
-					<td><a href="clients.php?s=$ip"><strong>$ip</strong></a></td>
-					<td>$num_used</td>
-					<td><em>$time_add</em></td>
-					<td><em>$time_edit</em></td>
-				</tr>
-EOD;
-				echo $data;
-			
-			endwhile;
-		
-		else : // if there are no aliases connected with this user then put out a small and short message
-		
-			echo '<tr><td colspan="4">'.$name.' has no other IP\'s.</td></tr>';
-		
-		endif;
-	?>
-	</tbody>
-</table>
-<?php endif; ?>
-
-<!-- Start Client Echelon Logs -->
-
-<?php
-	## Get Echelon Logs Client Logs (NOTE INFO IN THE ECHELON DB) ##
-	$ech_logs = $dbl->getEchLogs($cid, $game);
-	
-	$count = count($ech_logs);
-	if($count > 0) : // if there are records
-?>
-	<h3 class="cd-h cd-slide" id="cd-log">Echelon Logs<img class="cd-open" src="images/add.png" alt="Open" /></h3>
-	<table id="cd-log-table" class="slide-panel">
-		<thead>
-			<tr>
-				<th>id</th>
-				<th>Type</th>
-				<th>Message</th>
-				<th>Time Added</th>
-				<th>Admin</th>
-			</tr>
-		</thead>
-		<tfoot>
-			<tr><th colspan="5"></th></tr>
-		</tfoot>
-		<tbody>
-			<?php displayEchLog($ech_logs, 'client'); ?>
-		</tbody>
-	</table>
-<?php
-	endif; // end hide is no records
-?>
-
-<!-- Client Penalties -->
-
-<div id="penalties">
-	<h3 class="cd-h cd-slide" id="cd-pen">Penalties <img class="cd-open" src="images/add.png" alt="Open" /></h3>
-	<table id="cd-pen-table" class="slide-panel">
-		<thead>
-			<tr>
-				<th></th>
-				<th>Type</th>
-				<th>Added</th>
-				<th>Duration</th>
-				<th>Expires</th>
-				<th>Reason</th>
-				<th>Admin</th>
-			</tr>
-		</thead>
-		<tfoot>
-			<tr><td colspan="7"></td></tr>
-		</tfoot>
-		<tbody id="contain-pen">
-			<?php 
-				$type_inc = 'client';
-				include 'inc/cd/penalties.php'; 
+<!-- Extra Client Info -->
+<div id="tabs">
+	<ul>
+		<li><a href="ajax/clientdetails/aliases.php?id=<?php echo $cid; ?>&name=<?php echo $name; ?>"><span>Aliases</span></a></li>
+		<?php
+		//Do we have iptables in b3 db? This is sub optimal, but without a better way to check b3 version...
+		$result = $db->query("SHOW TABLES LIKE 'ipaliases'");
+		if($result["num_rows"]) {
 			?>
-		</tbody>
-	</table>
-</div>
-
-<!-- Admin History -->
-
-<div id="admin">
-	<h3 class="cd-h cd-slide" id="cd-admin">Admin Actions <img class="cd-open" src="images/add.png" alt="Open" /></h3>
-	<table id="cd-admin-table" class="slide-panel">
-		<thead>
-			<tr>
-				<th></th>
-				<th>Type</th>
-				<th>Added</th>
-				<th>Duration</th>
-				<th>Expires</th>
-				<th>Reason</th>
-				<th>Client</th>
-			</tr>
-		</thead>
-		<tfoot>
-			<tr><td colspan="7"></td></tr>
-		</tfoot>
-		<tbody id="contain-admin">
-			<?php 
-				$type_inc = 'admin';
-				include 'inc/cd/penalties.php'; 
+			<li><a href="ajax/clientdetails/ipaliases.php?id=<?php echo $cid; ?>&name=<?php echo $name; ?>"><span>IP Aliases</span></a></li>
+			<?php
+		}
+		//Do we have echelon logs for the selected client?
+		$ech_logs = $dbl->getEchLogs($cid, $game);
+		$count = count($ech_logs);
+		if($count > 0) {
 			?>
-		</tbody>
-	</table>
+			<li><a href="ajax/clientdetails/echelon_logs.php?id=<?php echo $cid; ?>"><span>Echelon Logs</span></a></li>
+			<?php
+		}
+		?>
+		<li><a href="ajax/clientdetails/penalties.php?id=<?php echo $cid; ?>&name=<?php echo $name; ?>&type=penalties"><span>Penalties</span></a></li>
+		<li><a href="ajax/clientdetails/penalties.php?id=<?php echo $cid; ?>&name=<?php echo $name; ?>&type=adminactions"><span>Admin Actions</span></a></li>
+	</ul>
 </div>
+<!-- /Extra Client Info Ends-->
+
 
 <?php
 ## Plugins Log Include Area ##
@@ -484,4 +304,3 @@ if(!$no_plugins_active)
 
 // Close page off with the footer
 require 'inc/footer.php'; 
-?>

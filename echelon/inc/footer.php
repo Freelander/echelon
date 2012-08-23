@@ -41,6 +41,9 @@
 <!-- load Datatables scripts -->
 <script src="<?php echo $path; ?>js/dataTables-scripts.js" charset="<?php echo $charset; ?>"></script>
 
+<!-- jQuery UI Tabs -->
+<script src="<?php echo $path; ?>js/jquery-ui-1.8.23.custom.min.js" charset="<?php echo $charset; ?>"></script>
+
 <!-- page specific js -->
 <?php if(isMe()) { ?>
 	<script src="js/me.js" charset="<?php echo $charset; ?>"></script>

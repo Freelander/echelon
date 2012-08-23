@@ -65,7 +65,7 @@ $(document).ready(function() {
 function editBanBox(thisItem) {
 
 	var ban_id = $(thisItem).attr('rel');
-	$.fn.colorbox({href:"inc/cd/editban.php?banid="+ ban_id}); 
+	$.fn.colorbox({href:"ajax/clientdetails/editban.php?banid="+ ban_id}); 
 
 }
 
@@ -76,3 +76,19 @@ function editBanCheck() {
 		$("#eb-ban-duration").slideDown();
 	}
 }
+
+/* jQuery UI - Tabs */
+$(function() {
+	$("#tabs").tabs({
+		ajaxOptions: {
+			spinner: "",
+			select: function(event, ui) {
+				var tabID = "#ui-tabs-" + (ui.index + 1);
+				$(tabID).html("<b>Fetching Data.... Please wait....</b>");
+			},
+			error: function(xhr, status, index, anchor) {
+				$(anchor.hash).html("Page cannot be loaded!");
+			}
+		}
+	});
+});
