@@ -118,7 +118,7 @@ require 'inc/header.php';
 	<div id="actions-box">
 		<?php
 			if($mem->reqLevel('comment')) :
-			$comment_token = genFormToken('comment');	
+			$comment_token = genFormToken('comment');
 		?>
 		<div id="cd-act-comment" class="act-slide">
 			
@@ -269,8 +269,8 @@ require 'inc/header.php';
 </div><!-- end #actions -->
 
 
-<!-- Extra Client Info -->
-<div id="tabs">
+<!-- Client Logs Area -->
+<div id="client-logs">
 	<ul>
 		<li><a href="ajax/clientdetails/aliases.php?id=<?php echo $cid; ?>&name=<?php echo $name; ?>"><span>Aliases</span></a></li>
 		<?php
@@ -294,7 +294,7 @@ require 'inc/header.php';
 		<li><a href="ajax/clientdetails/penalties.php?id=<?php echo $cid; ?>&name=<?php echo $name; ?>&type=adminactions"><span>Admin Actions</span></a></li>
 	</ul>
 </div>
-<!-- /Extra Client Info Ends-->
+<!-- /Client Logs Area-->
 
 
 <?php
@@ -303,4 +303,5 @@ if(!$no_plugins_active)
 	$plugins->displayCDlogs($cid);
 
 // Close page off with the footer
-require 'inc/footer.php'; 
+require 'inc/footer.php';
+?>

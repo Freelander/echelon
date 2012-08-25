@@ -79,7 +79,7 @@ function editBanCheck() {
 
 /* jQuery UI - Tabs */
 $(function() {
-	$("#tabs").tabs({
+	$("#client-logs").tabs({
 		ajaxOptions: {
 			spinner: "",
 			select: function(event, ui) {

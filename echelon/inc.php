@@ -81,21 +81,6 @@ if(!isset($auth_user_here))
 if($auth_user_here != false) // some pages do not need auth but include this file so this following line is optional
 	$mem->auth($auth_name); // see if user has the right access level is not on the BL and has not got a hack counter above 3
 
-## remove tokens from 2 pages ago to stop build up
-if(!isLogin()) : // stop login page from using this and moving the vars
-	$tokens = array();
-		
-	$num_tokens = count($_SESSION['tokens']);
-	
-	if($num_tokens > 0) :
-		foreach($_SESSION['tokens'] as $key => $value) :
-			$tokens[$key] = $value;
-		endforeach;
-		$_SESSION['tokens'] = array();
-	endif;
-	
-endif;
-
 ## if no time zone set display error ##
 if(NO_TIME_ZONE) // if no time zoneset show warning message
 	set_warning("Setup Error: The website's time zone is not set, defaulting to use Europe/London (GMT)");

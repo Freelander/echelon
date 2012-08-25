@@ -892,6 +892,7 @@ function verifyFormToken($form, $tokens) {
 	// check if a session is started and a token is transmitted, if not return an error
 	// check if the form is sent with token in it
 	// compare the tokens against each other if they are still the same
+	$tokens = $_SESSION['tokens'];
 	if(isset($tokens[$form]) && isset($_POST['token']) && $tokens[$form] === $_POST['token']) 
 		return true;
 	return false;
