@@ -4,7 +4,7 @@ $b3_conn = true; // this page needs to connect to the B3 database
 require '../../inc.php';
 
 ## Check the form was submitted ##
-if(!$_POST['unban-sub']) { // if the form not is submitted
+if(!$_POST['banid']) { // if the form is not submitted
 	set_error('Please do not call that page directly, thank you.');
 	send('../../index.php');
 }
